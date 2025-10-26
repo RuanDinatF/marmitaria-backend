@@ -1,4 +1,4 @@
-package com.ifsp.marmitaria.dto;
+package com.ifsp.marmitaria.dto.produto;
 
 import lombok.Getter;
 import lombok.Setter;

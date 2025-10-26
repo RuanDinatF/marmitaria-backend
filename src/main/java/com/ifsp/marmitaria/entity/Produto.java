@@ -7,27 +7,27 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "product")
+@Table(name = "produto")
 public class Produto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
      private Long id;
 
-    @Column(name = "name")
-     private String name;
+    @Column(name = "nome")
+     private String nome;
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_produto", nullable = false)
      private TipoProduto tipoProduto;
 
      @Column(name = "quantidade_estoque")
-     private double quantidadeEstoque;
+     private Double quantidadeEstoque;
 
      @Column(name = "estoque_minimo")
-     private double estoqueMinimo;
+     private Double estoqueMinimo;
 
      @Column(name = "preco_venda")
-     private double precoVenda;
+     private Double precoVenda;
 
 }
