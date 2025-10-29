@@ -2,26 +2,33 @@ package com.ifsp.marmitaria.service;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import com.ifsp.marmitaria.dto.TipoInsumoDTO;
+import com.ifsp.marmitaria.dto.insumo.TipoInsumoCreateDTO;
+import com.ifsp.marmitaria.dto.insumo.TipoInsumoDTO;
 import com.ifsp.marmitaria.entity.TipoInsumo;
 import com.ifsp.marmitaria.mapper.TipoInsumoMapper;
 import com.ifsp.marmitaria.repository.TipoInsumoRepository;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TipoInsumoService {
+
+	private static final Logger logger = LoggerFactory.getLogger(TipoInsumoService.class);
 
 	private final TipoInsumoRepository tipoInsumoRepository;
 	private final TipoInsumoMapper tipoInsumoMapper;
 
 	public TipoInsumoDTO getById(Long id) {
-		TipoInsumo tipoInsumo = tipoInsumoRepository.findById(id).orElseThrow();
+		TipoInsumo tipoInsumo = tipoInsumoRepository.findById(id).orElseThrow(() -> {
+			logger.warn("TipoInsumo não encontrado com id: {}", id);
+			return new EntityNotFoundException("TipoInsumo não encontrado com id: " + id);
+		});
 		return tipoInsumoMapper.toDTO(tipoInsumo);
 	}
 
@@ -30,24 +37,32 @@ public class TipoInsumoService {
 		return tipoInsumoMapper.toDTOs(tipoInsumoList);
 	}
 
-	public TipoInsumo create(TipoInsumoDTO dto) {
-		TipoInsumo tipoInsumo = tipoInsumoMapper.toEntity(dto);
-		return tipoInsumoRepository.save(tipoInsumo);
+	public TipoInsumoCreateDTO create(TipoInsumoCreateDTO dto) {
+	    TipoInsumo tipoInsumo = tipoInsumoMapper.toEntity(dto);
+
+	    
+	    tipoInsumoRepository.save(tipoInsumo);
+	    return dto;
 	}
 
-	public TipoInsumoDTO update(Long id, TipoInsumoDTO dto) {
-		TipoInsumo tipoInsumoExistente = tipoInsumoRepository.findById(id).orElseThrow();
+	public TipoInsumoDTO update(Long id, TipoInsumoCreateDTO dto) {
+		TipoInsumo tipoInsumoExistente = tipoInsumoRepository.findById(id).orElseThrow(() -> {
+			logger.warn("TipoInsumo não encontrado para update com id: {}", id);
+			return new EntityNotFoundException("TipoInsumo não encontrado com id: " + id);
+		});
+
 		tipoInsumoExistente.setTipo(dto.getTipo());
 
 		TipoInsumo tipoInsumoAtualizado = tipoInsumoRepository.save(tipoInsumoExistente);
 		return tipoInsumoMapper.toDTO(tipoInsumoAtualizado);
 	}
-	
-	public void delete(Long id) {
-	    if (!tipoInsumoRepository.existsById(id)) {
-	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "TipoInsumo não encontrado");
-	    }
-	    tipoInsumoRepository.deleteById(id);
-	}
 
+	public void delete(Long id) {
+		TipoInsumo tipoInsumoExistente = tipoInsumoRepository.findById(id).orElseThrow(() -> {
+			logger.warn("Tentativa de deletar TipoInsumo não existente, id: {}", id);
+			return new EntityNotFoundException("TipoInsumo não encontrado para exclusão com id: " + id);
+		});
+
+		tipoInsumoRepository.delete(tipoInsumoExistente);
+	}
 }
