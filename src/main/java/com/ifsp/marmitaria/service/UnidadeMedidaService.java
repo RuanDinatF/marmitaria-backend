@@ -2,26 +2,33 @@ package com.ifsp.marmitaria.service;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import com.ifsp.marmitaria.dto.UnidadeMedidaDTO;
+import com.ifsp.marmitaria.dto.unidademedida.UnidadeMedidaCreateDTO;
+import com.ifsp.marmitaria.dto.unidademedida.UnidadeMedidaDTO;
 import com.ifsp.marmitaria.entity.UnidadeMedida;
 import com.ifsp.marmitaria.mapper.UnidadeMedidaMapper;
 import com.ifsp.marmitaria.repository.UnidadeMedidaRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class UnidadeMedidaService {
 
+	private static final Logger logger = LoggerFactory.getLogger(UnidadeMedidaService.class);
+
 	private final UnidadeMedidaRepository unidadeMedidaRepository;
 	private final UnidadeMedidaMapper unidadeMedidaMapper;
 
 	public UnidadeMedidaDTO getById(Long id) {
-		UnidadeMedida unidadeMedida = unidadeMedidaRepository.findById(id).orElseThrow();
+		UnidadeMedida unidadeMedida = unidadeMedidaRepository.findById(id).orElseThrow(() -> {
+			logger.warn("UnidadeMedida não encontrada com id: {}", id);
+			return new EntityNotFoundException("UnidadeMedida não encontrada com id: " + id);
+		});
 		return unidadeMedidaMapper.toDTO(unidadeMedida);
 	}
 
@@ -30,27 +37,36 @@ public class UnidadeMedidaService {
 		return unidadeMedidaMapper.toDTOs(unidadeMedidaList);
 	}
 
-	public UnidadeMedida create(UnidadeMedidaDTO dto) {
-		UnidadeMedida unidadeMedida = unidadeMedidaMapper.toEntity(dto);
-		return unidadeMedidaRepository.save(unidadeMedida);
+
+	
+	public UnidadeMedidaCreateDTO create(UnidadeMedidaCreateDTO dto) {
+	    UnidadeMedida unidadeMedida = unidadeMedidaMapper.toEntity(dto);
+	    unidadeMedidaRepository.save(unidadeMedida);
+	  
+	    return dto;
 	}
 
-	public UnidadeMedidaDTO update(Long id, UnidadeMedidaDTO dto) {
-		UnidadeMedida unidadeMedidaExistente = unidadeMedidaRepository.findById(id).orElseThrow();
+	public UnidadeMedidaDTO update(Long id, UnidadeMedidaCreateDTO dto) {
+		UnidadeMedida unidadeMedidaExistente = unidadeMedidaRepository.findById(id).orElseThrow(() -> {
+			logger.warn("UnidadeMedida não encontrada para update com id: {}", id);
+			return new EntityNotFoundException("UnidadeMedida não encontrada com id: " + id);
+		});
 
 		unidadeMedidaExistente.setDescricao(dto.getDescricao());
 		unidadeMedidaExistente.setAbreviacao(dto.getAbreviacao());
 
 		UnidadeMedida unidadeMedidaAtualizado = unidadeMedidaRepository.save(unidadeMedidaExistente);
 		return unidadeMedidaMapper.toDTO(unidadeMedidaAtualizado);
+	}
 
-	}
-	
 	public void delete(Long id) {
-	    if (!unidadeMedidaRepository.existsById(id)) {
-	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "UnidadeMedida não encontrado");
-	    }
-	    unidadeMedidaRepository.deleteById(id);
+		UnidadeMedida unidadeMedidaExistente = unidadeMedidaRepository.findById(id).orElseThrow(() -> {
+			logger.warn("Tentativa de deletar UnidadeMedida não existente, id: {}", id);
+			return new EntityNotFoundException("UnidadeMedida não encontrada para exclusão com id: " + id);
+		});
+
+		unidadeMedidaRepository.delete(unidadeMedidaExistente);
 	}
+
 
 }
