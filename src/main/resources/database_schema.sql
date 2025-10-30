@@ -117,4 +117,8 @@ CREATE TABLE nota_fiscal (
 CREATE TABLE tipos_imposto (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     tipo VARCHAR(50) NOT NULL
+<<<<<<< HEAD
 );
+=======
+);
+>>>>>>> ec90ce1a4462fd5e1dc71ef3fca9cdd0b31076a2
