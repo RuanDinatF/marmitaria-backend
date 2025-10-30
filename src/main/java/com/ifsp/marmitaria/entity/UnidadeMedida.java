@@ -12,14 +12,17 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tipo_insumo")
-public class TipoInsumo {
+@Table(name = "unidade_medida")
+public class UnidadeMedida {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@Column(name = "tipo")
-	private String tipo;
+	
+	@Column(name =  "descricao")
+	private String descricao;
+	
+	@Column(name =  "abreviacao")
+	private String abreviacao;
 
 }
