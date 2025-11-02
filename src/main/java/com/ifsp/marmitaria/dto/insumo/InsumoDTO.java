@@ -16,8 +16,8 @@ public class InsumoDTO {
 
 	private String nome;
 	private Double quantidadeEstoqueIn;
-	private UnidadeMedida unidadeMedida;
+	private UnidadeMedida unidadeMedidaDTO;
 	private Double custoUnitario;
 	private LocalDate dataValidade;
-	private TipoInsumo tipoInsumo;
+	private TipoInsumo tipoInsumoDTO;
 }

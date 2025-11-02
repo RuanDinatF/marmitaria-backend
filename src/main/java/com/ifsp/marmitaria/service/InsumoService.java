@@ -24,86 +24,80 @@ import lombok.AllArgsConstructor;
 public class InsumoService {
 	private static final Logger logger = LoggerFactory.getLogger(InsumoService.class);
 
-    private final InsumoRepository insumoRepository;
-    private final InsumoMapper insumoMapper;
-    private final TipoInsumoRepository tipoInsumoRepository;
-    private final UnidadeMedidaRepository unidadeMedidaRepository;
+	private final InsumoRepository insumoRepository;
+	private final InsumoMapper insumoMapper;
+	private final TipoInsumoRepository tipoInsumoRepository;
+	private final UnidadeMedidaRepository unidadeMedidaRepository;
 
-    public InsumoDTO getById(Long id) {
-        Insumo insumo = insumoRepository.findById(id).orElseThrow(() -> {
-            logger.warn("Insumo não encontrado com id: {}", id);
-            return new EntityNotFoundException("Insumo não encontrado com id: " + id);
-        });
-        return insumoMapper.toDTO(insumo);
-    }
+	public InsumoDTO getById(Long id) {
+		Insumo insumo = insumoRepository.findById(id).orElseThrow(() -> {
+			logger.warn("Insumo não encontrado com id: {}", id);
+			return new EntityNotFoundException("Insumo não encontrado com id: " + id);
+		});
+		return insumoMapper.toDTO(insumo);
+	}
 
-    public List<InsumoDTO> findAll() {
-        List<Insumo> insumos = insumoRepository.findAll();
-        return insumoMapper.toDTOs(insumos);
-    }
+	public List<InsumoDTO> findAll() {
+		List<Insumo> insumos = insumoRepository.findAll();
+		return insumoMapper.toDTOs(insumos);
+	}
 
-    public InsumoCreateDTO create(InsumoCreateDTO dto) {
-        Insumo insumo = insumoMapper.toEntity(dto);
+	public InsumoCreateDTO create(InsumoCreateDTO dto) {
+		Insumo insumo = insumoMapper.toEntity(dto);
 
-        TipoInsumo tipoInsumo = tipoInsumoRepository.findById(dto.getTipoInsumo().getId())
-                .orElseThrow(() -> {
-                    logger.warn("TipoInsumo não encontrado com id: {}", dto.getTipoInsumo().getId());
-                    return new EntityNotFoundException("TipoInsumo não encontrado com id: " + dto.getTipoInsumo().getId());
-                });
-        insumo.setTipoInsumo(tipoInsumo);
+		TipoInsumo tipoInsumo = tipoInsumoRepository.findById(dto.getTipoInsumoId()).orElseThrow(() -> {
+			logger.warn("TipoInsumo não encontrado com id: {}", (dto.getTipoInsumoId()));
+			return new EntityNotFoundException("TipoInsumo não encontrado com id: " + (dto.getTipoInsumoId()));
+		});
 
-        UnidadeMedida unidadeMedida = unidadeMedidaRepository.findById(dto.getUnidadeMedida().getId())
-                .orElseThrow(() -> {
-                    logger.warn("UnidadeMedida não encontrada com id: {}", dto.getUnidadeMedida().getId());
-                    return new EntityNotFoundException("UnidadeMedida não encontrada com id: " + dto.getUnidadeMedida().getId());
-                });
-        insumo.setUnidadeMedida(unidadeMedida);
+		UnidadeMedida unidadeMedida = unidadeMedidaRepository.findById(dto.getUnidadeMedidaId()).orElseThrow(() -> {
+			logger.warn("UnidadeMedida não encontrada com id: {}", dto.getUnidadeMedidaId());
+			return new EntityNotFoundException("UnidadeMedida não encontrada com id: " + dto.getUnidadeMedidaId());
+		});
 
-        insumoRepository.save(insumo);
-        return dto; 
-    }
-    
-    public InsumoDTO update(Long id, InsumoCreateDTO dto) {
-        Insumo insumoExistente = insumoRepository.findById(id).orElseThrow(() -> {
-            logger.warn("Insumo não encontrado para update com id: {}", id);
-            return new EntityNotFoundException("Insumo não encontrado com id: " + id);
-        });
+		insumo.setTipoInsumo(tipoInsumo);
+		insumo.setUnidadeMedida(unidadeMedida);
 
-       
-        insumoExistente.setNome(dto.getNome());
-        insumoExistente.setQuantidadeEstoqueIn(dto.getQuantidadeEstoqueIn());
-        insumoExistente.setCustoUnitario(dto.getCustoUnitario());
-        insumoExistente.setDataValidade(dto.getDataValidade());
+		insumoRepository.save(insumo);
 
-    
-        TipoInsumo tipoInsumo = tipoInsumoRepository.findById(dto.getTipoInsumo().getId()).orElseThrow(() -> {
-            logger.warn("TipoInsumo não encontrado para update com id: {}", dto.getTipoInsumo().getId());
-            return new EntityNotFoundException("TipoInsumo não encontrado com id: " + dto.getTipoInsumo().getId());
-        });
-        insumoExistente.setTipoInsumo(tipoInsumo);
+		return dto;
+	}
 
-        
-        UnidadeMedida unidadeMedida = unidadeMedidaRepository.findById(dto.getUnidadeMedida().getId()).orElseThrow(() -> {
-            logger.warn("UnidadeMedida não encontrada para update com id: {}", dto.getUnidadeMedida().getId());
-            return new EntityNotFoundException("UnidadeMedida não encontrada com id: " + dto.getUnidadeMedida().getId());
-        });
-        insumoExistente.setUnidadeMedida(unidadeMedida);
+	public InsumoDTO update(Long id, InsumoCreateDTO dto) {
+		Insumo insumoExistente = insumoRepository.findById(id).orElseThrow(() -> {
+			logger.warn("Insumo não encontrado para update com id: {}", id);
+			return new EntityNotFoundException("Insumo não encontrado com id: " + id);
+		});
 
-        
-        Insumo insumoAtualizado = insumoRepository.save(insumoExistente);
-        return insumoMapper.toDTO(insumoAtualizado);
-    }
-    
-    public void delete(Long id) {
-        Insumo insumoExistente = insumoRepository.findById(id)
-                .orElseThrow(() -> {
-                    logger.warn("Tentativa de deletar insumo não existente, id: {}", id);
-                    return new EntityNotFoundException("Insumo não encontrado para exclusão com id: " + id);
-                });
+		insumoExistente.setNome(dto.getNome());
+		insumoExistente.setQuantidadeEstoqueIn(dto.getQuantidadeEstoqueIn());
+		insumoExistente.setCustoUnitario(dto.getCustoUnitario());
+		insumoExistente.setDataValidade(dto.getDataValidade());
 
-       
-        insumoRepository.delete(insumoExistente);
-    }
+		TipoInsumo tipoInsumo = tipoInsumoRepository.findById(dto.getTipoInsumoId()).orElseThrow(() -> {
+			logger.warn("TipoInsumo não encontrado para update com id: {}", dto.getTipoInsumoId());
+			return new EntityNotFoundException("TipoInsumo não encontrado com id: " + dto.getTipoInsumoId());
+		});
 
+		UnidadeMedida unidadeMedida = unidadeMedidaRepository.findById(dto.getUnidadeMedidaId()).orElseThrow(() -> {
+			logger.warn("UnidadeMedida não encontrada para update com id: {}", dto.getUnidadeMedidaId());
+			return new EntityNotFoundException("UnidadeMedida não encontrada com id: " + dto.getUnidadeMedidaId());
+		});
+
+		insumoExistente.setTipoInsumo(tipoInsumo);
+		insumoExistente.setUnidadeMedida(unidadeMedida);
+		Insumo insumoAtualizado = insumoRepository.save(insumoExistente);
+
+		return insumoMapper.toDTO(insumoAtualizado);
+	}
+
+	public void delete(Long id) {
+		Insumo insumoExistente = insumoRepository.findById(id).orElseThrow(() -> {
+			logger.warn("Tentativa de deletar insumo não existente, id: {}", id);
+			return new EntityNotFoundException("Insumo não encontrado para exclusão com id: " + id);
+		});
+
+		insumoRepository.delete(insumoExistente);
+	}
 
 }
