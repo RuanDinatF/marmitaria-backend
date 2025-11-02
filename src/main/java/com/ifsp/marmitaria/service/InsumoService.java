@@ -96,7 +96,11 @@ public class InsumoService {
 			logger.warn("Tentativa de deletar insumo não existente, id: {}", id);
 			return new EntityNotFoundException("Insumo não encontrado para exclusão com id: " + id);
 		});
-
+		
+		//antes de deletar set->null
+		//removendo references vinculadas p/ Insumo
+		insumoRepository.deleteItemsByInsumoId(id);
+		
 		insumoRepository.delete(insumoExistente);
 	}
 
