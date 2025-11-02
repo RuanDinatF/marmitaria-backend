@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/unidades-medida")
+@RequestMapping("/unidades-medida")
 public class UnidadeMedidaController {
 
 	private final UnidadeMedidaService unidadeMedidaService;

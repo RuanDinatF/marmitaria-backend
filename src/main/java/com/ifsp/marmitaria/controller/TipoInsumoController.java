@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/tipos-insumo")
+@RequestMapping("/tipos-insumo")
 public class TipoInsumoController {
 
 	private final TipoInsumoService tipoInsumoService;

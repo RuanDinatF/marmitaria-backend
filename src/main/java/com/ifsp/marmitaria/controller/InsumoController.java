@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/insumos")
+@RequestMapping("/insumos")
 public class InsumoController {
 
 	private final InsumoService insumoService;
