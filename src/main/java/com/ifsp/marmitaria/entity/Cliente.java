@@ -1,5 +1,6 @@
 package com.ifsp.marmitaria.entity;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,14 +13,26 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tipo_insumo")
-public class TipoInsumo {
+@Table(name = "clientes")
+public class Cliente {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@Column(name = "tipo")
-	private String tipo;
-
+	
+	@Column(name = "nome")
+	private String nome;
+	
+	@Column(name = "endereco")
+    private String endereco;
+    
+	@Column(name = "telefone")
+	private String telefone;
+	
+	@Column(name = "saldo")
+	private Double saldo;
+	
+	@Column(name = "limite_credito")
+	private Boolean limiteCredito;
+    
 }
