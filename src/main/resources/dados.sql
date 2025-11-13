@@ -129,4 +129,3 @@ INSERT INTO itens_venda (id_venda, id_produto, quantidade) VALUES
 (2, 2, 1), -- 1 marmita vegetariana
 (2, 4, 1), -- 1 pudim
 (3, 3, 1); -- 1 suco
-
