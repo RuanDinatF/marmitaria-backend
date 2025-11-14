@@ -25,18 +25,24 @@ public class CaixaService {
     @Transactional
     public CaixaResponseDTO abrirCaixa(Double valorInicial) {
         Optional<Caixa> caixaAberto = caixaRepository.findByStatus(StatusCaixa.ABERTO);
-        if (caixaAberto.isPresent()) {
-            throw new IllegalStateException("Já existe um caixa aberto!");
+        if (valorInicial == null || valorInicial < 0) {
+            throw new IllegalArgumentException("O valor inicial não pode ser negativo.");
+        } else {
+            if (caixaAberto.isPresent()) {
+                throw new IllegalStateException("Já existe um caixa aberto!");
+            }
+
+            Caixa caixa = new Caixa();
+            caixa.setStatus(StatusCaixa.ABERTO);
+            caixa.setDataAbertura(LocalDateTime.now());
+            caixa.setSaldoInicial(BigDecimal.valueOf(valorInicial));
+            caixa.setSaldoFinal(BigDecimal.ZERO);
+
+            return CaixaMapper.toDTO(caixaRepository.save(caixa));
         }
-
-        Caixa caixa = new Caixa();
-        caixa.setStatus(StatusCaixa.ABERTO);
-        caixa.setDataAbertura(LocalDateTime.now());
-        caixa.setSaldoInicial(BigDecimal.valueOf(valorInicial));
-        caixa.setSaldoFinal(BigDecimal.ZERO);
-
-        return CaixaMapper.toDTO(caixaRepository.save(caixa));
     }
+
+
 
     @Transactional
     public CaixaResponseDTO fecharCaixa(Long idCaixa, Double valorFinal) {
@@ -69,8 +75,8 @@ public class CaixaService {
     private CaixaResponseDTO toDTO(Caixa caixa) {
         return new CaixaResponseDTO(
                 caixa.getId(),
-                caixa.getSaldoInicial().doubleValue(),
-                caixa.getSaldoFinal().doubleValue(),
+                caixa.getSaldoInicial() != null ? caixa.getSaldoInicial().doubleValue() : 0.0,
+                caixa.getSaldoFinal() != null ? caixa.getSaldoFinal().doubleValue() : 0.0,
                 caixa.getDataAbertura(),
                 caixa.getDataFechamento(),
                 caixa.getStatus()
