@@ -39,7 +39,7 @@ public class ProductService {
         return produtoMapper.toDTOs(produtos);
     }
 
-    public ProdutoCreateDTO create (ProdutoCreateDTO dto){
+    public ProdutoDTO create (ProdutoCreateDTO dto){
         Produto produto = produtoMapper.toEntity(dto);
 
         TipoProduto tipoProduto = tipoProdutoRepository.findById(dto.getTipoProdutoId())
@@ -49,8 +49,9 @@ public class ProductService {
                 });
         produto.setTipoProduto(tipoProduto);
 
-        produtoRepository.save(produto);
-        return dto;
+        Produto produtoSalvo = produtoRepository.save(produto);
+        logger.info("Produto criado com sucesso, id: {}", produtoSalvo.getId());
+        return produtoMapper.toDTO(produtoSalvo);
     }
 
     public ProdutoDTO update(Long id, ProdutoCreateDTO dto){

@@ -32,9 +32,9 @@ public class ProdutoController {
 
 
     @PostMapping()
-    public ResponseEntity<String> create(@RequestBody @Valid ProdutoCreateDTO dto) {
-        ProdutoCreateDTO novoProduto = productService.create(dto);
-        return ResponseEntity.ok("Produto Criado");
+    public ResponseEntity<ProdutoDTO> create(@RequestBody @Valid ProdutoCreateDTO dto) {
+        ProdutoDTO novoProduto = productService.create(dto);
+        return ResponseEntity.status(201).body(novoProduto);
     }
 
 
