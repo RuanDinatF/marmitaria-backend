@@ -77,11 +77,11 @@ public class ClienteService {
 	        return; 
 	    }
 
-	    boolean isSaldoNegativo = dto.getSaldo() < 0; 
+	    boolean saldoNegativo = dto.getSaldo() < 0; 
 
-	    dto.setLimiteCredito(!isSaldoNegativo); 
+	    dto.setLimiteCredito(!saldoNegativo); 
 
-	    if (isSaldoNegativo) {
+	    if (saldoNegativo) {
 	        logger.warn("O saldo é negativo (saldo: %.2f). O cliente não possui Crédito.", dto.getSaldo());
 	    } else {
 	        logger.info("O saldo é positivo (saldo: %.2f). O cliente possui Crédito.", dto.getSaldo());
