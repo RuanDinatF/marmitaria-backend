@@ -101,8 +101,8 @@ CREATE TABLE item_ficha_produto (
     quantidade DOUBLE,
     id_unidade_medida BIGINT NOT NULL,
     id_produto BIGINT NOT NULL,
-    FOREIGN KEY (id_produto) REFERENCES produto(id),
-    FOREIGN KEY (id_insumo) REFERENCES insumo(id),
+    FOREIGN KEY (id_produto) REFERENCES produto(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_insumo) REFERENCES insumo(id) ON DELETE RESTRICT,
     FOREIGN KEY (id_unidade_medida) REFERENCES unidade_medida(id)
 );
 
