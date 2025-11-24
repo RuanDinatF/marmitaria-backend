@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.ifsp.marmitaria.entity.Cliente;
 
 @Repository
-public interface ClienteRepository extends JpaRepository<Cliente, Long>{
-	
+public interface ClienteRepository extends JpaRepository<Cliente, Long> {
+
 }
