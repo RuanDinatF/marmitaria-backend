@@ -14,7 +14,7 @@ public class InsumoDTO {
 
     private String nome;
 
-    private Double quantidadeEstoqueIn;
+    private Double quantidadeEstoque;
 
     private UnidadeMedidaDTO unidadeMedida;
 

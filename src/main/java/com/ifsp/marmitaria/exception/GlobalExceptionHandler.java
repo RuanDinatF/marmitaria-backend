@@ -35,7 +35,13 @@ public class GlobalExceptionHandler {
         
         // Verifica se é um erro 'foreign key constraint'
         if (ex.getMessage() != null && ex.getMessage().contains("foreign key constraint")) {
-            message = "Não é possível excluir este produto pois ele está sendo usado em outras partes do sistema (ficha técnica).";
+            if (ex.getMessage().contains("itens_venda")) {
+                message = "Não é possível excluir este produto pois ele possui vendas registradas no sistema. Produtos com histórico de vendas não podem ser removidos.";
+            } else if (ex.getMessage().contains("item_ficha_produto")) {
+                message = "Não é possível excluir este item pois ele está sendo usado em fichas técnicas de produtos.";
+            } else {
+                message = "Não é possível excluir este registro pois ele está sendo usado em outras partes do sistema.";
+            }
         }
         
         return ResponseEntity.status(HttpStatus.CONFLICT).body(message);

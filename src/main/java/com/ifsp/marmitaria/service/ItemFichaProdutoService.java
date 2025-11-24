@@ -46,6 +46,12 @@ public class ItemFichaProdutoService {
         return mapper.toDTOs(items);
     }
 
+    public List<ItemFichaProdutoDTO> findByProdutoId(Long produtoId) {
+        List<ItemFichaProduto> items = repository.findByProdutoId(produtoId);
+        logger.info("Total de {} ItemFichaProduto encontrados para produto id: {}", items.size(), produtoId);
+        return mapper.toDTOs(items);
+    }
+
     public ItemFichaProdutoCreateDTO create(ItemFichaProdutoCreateDTO dto) {
         ItemFichaProduto itemFichaProduto = mapper.toEntity(dto);
 

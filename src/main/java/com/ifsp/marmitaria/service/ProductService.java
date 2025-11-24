@@ -82,6 +82,12 @@ public class ProductService {
                     return new EntityNotFoundException("Produto não encontrado para exclusão com id: " + id);
                 });
 
-        produtoRepository.delete(produtoExistente);
+        try {
+            produtoRepository.delete(produtoExistente);
+            logger.info("Produto deletado com sucesso, id: {}", id);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            logger.warn("Tentativa de deletar produto com referências em vendas, id: {}", id);
+            throw new IllegalStateException("Não é possível excluir este produto pois ele possui vendas registradas no sistema. Produtos com histórico de vendas não podem ser removidos para manter a integridade dos dados.");
+        }
     }
 }
