@@ -40,11 +40,26 @@ CREATE TABLE movimentacao_financeira (
 
 -- Tabela caixa
 CREATE TABLE caixa (
-    id BIGINT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     data_abertura DATETIME NOT NULL,
     data_fechamento DATETIME,
-    saldo_inicial DOUBLE,
-    saldo_final DOUBLE
+    saldo_inicial DECIMAL(38,2),
+    saldo_final DECIMAL(38,2),
+    status VARCHAR(40)
+);
+
+CREATE TABLE movimentacao_caixa
+(
+    id        BIGINT AUTO_INCREMENT PRIMARY KEY,
+    caixa_id  BIGINT,
+    tipo      VARCHAR(255),
+    descricao VARCHAR(255),
+    valor     DECIMAL(38, 2),
+    data_hora DATETIME,
+
+    CONSTRAINT fk_mov_caixa
+        FOREIGN KEY (caixa_id)
+            REFERENCES caixa (id)
 );
 
 -- Tabela venda
@@ -101,8 +116,8 @@ CREATE TABLE item_ficha_produto (
     quantidade DOUBLE,
     id_unidade_medida BIGINT NOT NULL,
     id_produto BIGINT NOT NULL,
-    FOREIGN KEY (id_produto) REFERENCES produto(id),
-    FOREIGN KEY (id_insumo) REFERENCES insumo(id),
+    FOREIGN KEY (id_produto) REFERENCES produto(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_insumo) REFERENCES insumo(id) ON DELETE RESTRICT,
     FOREIGN KEY (id_unidade_medida) REFERENCES unidade_medida(id)
 );
 

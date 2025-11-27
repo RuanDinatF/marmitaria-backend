@@ -101,9 +101,11 @@ INSERT INTO tipos_imposto (tipo) VALUES
 -- ------------------------------
 -- CAIXA
 -- ------------------------------
-INSERT INTO caixa (id, data_abertura, data_fechamento, saldo_inicial, saldo_final) VALUES
-(1, '2025-10-25 08:00:00', '2025-10-25 18:00:00', 500.00, 950.00),
-(2, '2025-10-26 08:00:00', NULL, 600.00, NULL);
+INSERT INTO caixa (id, data_abertura, data_fechamento, saldo_inicial, saldo_final, status) VALUES
+(1, '2025-10-25 08:00:00', '2025-10-25 18:00:00', 500.00, 950.00, 'FECHADO'),
+(2, '2025-10-26 08:00:00', NULL, 600.00, NULL, 'FECHADO');
+
+
 
 -- ------------------------------
 -- MOVIMENTAÇÃO FINANCEIRA
