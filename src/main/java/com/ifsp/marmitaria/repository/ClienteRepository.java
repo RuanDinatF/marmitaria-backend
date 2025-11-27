@@ -1,9 +1,11 @@
 package com.ifsp.marmitaria.repository;
 
-import com.ifsp.marmitaria.entity.Produto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.ifsp.marmitaria.entity.Cliente;
+
 @Repository
-public interface ProdutoRepository extends JpaRepository<Produto, Long> {
+public interface ClienteRepository extends JpaRepository<Cliente, Long> {
+
 }
