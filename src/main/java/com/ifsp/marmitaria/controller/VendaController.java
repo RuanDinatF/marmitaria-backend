@@ -26,6 +26,7 @@ public class VendaController {
 
 	private final VendaService vendaService;
 
+
     @GetMapping
     public ResponseEntity<List<VendaDTO>> findAll() {
         List<VendaDTO> vendas = vendaService.findAll();
@@ -56,4 +57,5 @@ public class VendaController {
         return ResponseEntity.ok("Venda deletado com sucesso.");
     }
 	
+
 }

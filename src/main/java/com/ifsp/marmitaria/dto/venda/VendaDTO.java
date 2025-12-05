@@ -1,5 +1,6 @@
 package com.ifsp.marmitaria.dto.venda;
 
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -21,4 +22,5 @@ public class VendaDTO {
 	private BigDecimal saldoFinal;    
 	private LocalDateTime dataHora;
 	    
+
 }

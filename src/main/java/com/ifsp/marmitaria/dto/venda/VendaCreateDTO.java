@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Getter
 @Setter
 public class VendaCreateDTO {
@@ -27,5 +28,6 @@ public class VendaCreateDTO {
 
 	@NotNull(message = "A data e hora é obrigatória")
 	private LocalDateTime dataHora;
+
 
 }
