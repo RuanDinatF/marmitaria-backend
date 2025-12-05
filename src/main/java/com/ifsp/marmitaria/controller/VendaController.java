@@ -12,48 +12,48 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ifsp.marmitaria.dto.cliente.ClienteCreateDTO;
-import com.ifsp.marmitaria.dto.cliente.ClienteDTO;
-import com.ifsp.marmitaria.service.ClienteService;
+import com.ifsp.marmitaria.dto.venda.VendaCreateDTO;
+import com.ifsp.marmitaria.dto.venda.VendaDTO;
+import com.ifsp.marmitaria.service.VendaService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/clientes")
-public class ClienteController {
+@RequestMapping("/vendas")
+public class VendaController {
 
-	private final ClienteService clienteService;
+	private final VendaService vendaService;
 
     @GetMapping
-    public ResponseEntity<List<ClienteDTO>> findAll() {
-        List<ClienteDTO> clientes = clienteService.findAll();
-        return ResponseEntity.ok(clientes);
+    public ResponseEntity<List<VendaDTO>> findAll() {
+        List<VendaDTO> vendas = vendaService.findAll();
+        return ResponseEntity.ok(vendas);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteDTO> findById(@PathVariable Long id) {
-        ClienteDTO dto = clienteService.getById(id);
+    public ResponseEntity<VendaDTO> findById(@PathVariable Long id) {
+        VendaDTO dto = vendaService.getById(id);
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody @Valid ClienteCreateDTO dto) {
-    	clienteService.create(dto);
-        return ResponseEntity.ok("Cliente criado com sucesso.");
+    public ResponseEntity<String> create(@RequestBody @Valid VendaCreateDTO dto) {
+    	vendaService.create(dto);
+        return ResponseEntity.ok("Venda criado com sucesso.");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteDTO> update(@PathVariable Long id, @RequestBody @Valid ClienteCreateDTO dto) {
-        ClienteDTO atualizado = clienteService.update(id, dto);
+    public ResponseEntity<VendaDTO> update(@PathVariable Long id, @RequestBody @Valid VendaCreateDTO dto) {
+        VendaDTO atualizado = vendaService.update(id, dto);
         return ResponseEntity.ok(atualizado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
-        clienteService.delete(id);
-        return ResponseEntity.ok("Cliente deletado com sucesso.");
+        vendaService.delete(id);
+        return ResponseEntity.ok("Venda deletado com sucesso.");
     }
 	
 }
