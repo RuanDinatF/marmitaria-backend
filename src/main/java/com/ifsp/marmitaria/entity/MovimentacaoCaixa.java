@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -31,12 +30,12 @@ public class MovimentacaoCaixa {
     private String descricao;
 
     @Column(name = "valor", nullable = false)
-    private BigDecimal valor;
+    private Double valor;
 
     @Column(name = "data_hora", nullable = false)
     private LocalDateTime dataHora;
 
-    public MovimentacaoCaixa(Caixa caixa, TipoMovimentacao tipo, String descricao, BigDecimal valor) {
+    public MovimentacaoCaixa(Caixa caixa, TipoMovimentacao tipo, String descricao, Double valor) {
         this.caixa = caixa;
         this.tipo = tipo;
         this.descricao = descricao;

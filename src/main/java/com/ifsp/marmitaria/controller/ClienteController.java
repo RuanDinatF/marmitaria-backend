@@ -39,9 +39,9 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody @Valid ClienteCreateDTO dto) {
-        ClienteCreateDTO novoCliente = clienteService.create(dto);
-        return ResponseEntity.ok("Cliente criado com sucesso.");
+    public ResponseEntity<ClienteDTO> create(@RequestBody @Valid ClienteCreateDTO dto) {
+        ClienteDTO novoCliente = clienteService.create(dto);
+        return ResponseEntity.ok(novoCliente);
     }
 
     @PutMapping("/{id}")

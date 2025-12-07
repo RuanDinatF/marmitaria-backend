@@ -37,11 +37,12 @@ public class ClienteService {
 		return clienteMapper.toDTOs(clienteList);
 	}
 
-	public ClienteCreateDTO create(ClienteCreateDTO dto) {
+	public ClienteDTO create(ClienteCreateDTO dto) {
 		validateCreditLimit(dto);
 		Cliente cliente = clienteMapper.toEntity(dto);
-		clienteRepository.save(cliente);
-		return dto;
+		cliente.setAtivo(true); // Garante que novos clientes são criados como ativos
+		Cliente clienteSalvo = clienteRepository.save(cliente);
+		return clienteMapper.toDTO(clienteSalvo);
 	}
 
 	public ClienteDTO update(Long id, ClienteCreateDTO dto) {
@@ -68,7 +69,10 @@ public class ClienteService {
 			return new EntityNotFoundException("Cliente não encontrado para exclusão com id: " + id);
 		});
 
-		clienteRepository.delete(clienteExistente);
+		// Soft delete: marca como inativo ao invés de deletar
+		clienteExistente.setAtivo(false);
+		clienteRepository.save(clienteExistente);
+		logger.info("Cliente com id {} foi marcado como inativo (soft delete)", id);
 	}
 
 	private void validateCreditLimit(ClienteCreateDTO dto) {
@@ -77,14 +81,16 @@ public class ClienteService {
 	        return; 
 	    }
 
-	    boolean saldoNegativo = dto.getSaldo() < 0; 
-
-	    dto.setLimiteCredito(!saldoNegativo); 
-
-	    if (saldoNegativo) {
-	        logger.warn("O saldo é negativo (saldo: %.2f). O cliente não possui Crédito.", dto.getSaldo());
+	    // Apenas loga avisos, mas não força a mudança do limite de crédito
+	    // O usuário pode decidir liberar crédito mesmo com saldo zero (ex: cliente confiável)
+	    if (dto.getLimiteCredito() != null && dto.getLimiteCredito()) {
+	        if (dto.getSaldo() > 0) {
+	            logger.info("Cliente com saldo positivo (saldo: {}) e crédito liberado.", String.format("%.2f", dto.getSaldo()));
+	        } else {
+	            logger.warn("ATENÇÃO: Cliente com saldo zero ou negativo (saldo: {}) mas crédito foi LIBERADO manualmente.", String.format("%.2f", dto.getSaldo()));
+	        }
 	    } else {
-	        logger.info("O saldo é positivo (saldo: %.2f). O cliente possui Crédito.", dto.getSaldo());
+	        logger.info("Cliente com crédito bloqueado (saldo: {}).", String.format("%.2f", dto.getSaldo()));
 	    }
 	}
 

@@ -13,7 +13,6 @@ import com.ifsp.marmitaria.repository.MovimentacaoCaixaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,8 +41,8 @@ public class CaixaService {
             Caixa caixa = new Caixa();
             caixa.setStatus(StatusCaixa.ABERTO);
             caixa.setDataAbertura(LocalDateTime.now());
-            caixa.setSaldoInicial(BigDecimal.valueOf(valorInicial));
-            caixa.setSaldoFinal(BigDecimal.ZERO);
+            caixa.setSaldoInicial(valorInicial);
+            caixa.setSaldoFinal(0.0);
 
             return CaixaMapper.toDTO(caixaRepository.save(caixa));
         }
@@ -58,8 +57,9 @@ public class CaixaService {
         Caixa caixa = caixaRepository.findById(createDTO.getCaixaId())
                 .orElseThrow(() -> new IllegalArgumentException("Caixa não encontrado"));
 
-        if (caixa.getStatus() == StatusCaixa.FECHADO) {
-            throw new IllegalStateException("Não é possível adicionar movimentação em caixa fechado");
+        // Validate that caixa is open (Requirement 6.4)
+        if (caixa.getStatus() != StatusCaixa.ABERTO) {
+            throw new IllegalStateException("Não é possível adicionar movimentação em caixa que não está aberto");
         }
 
         if (createDTO.getValor() == null || createDTO.getValor() <= 0) {
@@ -74,7 +74,7 @@ public class CaixaService {
         movimentacao.setCaixa(caixa);
         movimentacao.setTipo(createDTO.getTipo());
         movimentacao.setDescricao(createDTO.getDescricao());
-        movimentacao.setValor(BigDecimal.valueOf(createDTO.getValor()));
+        movimentacao.setValor(createDTO.getValor());
         movimentacao.setDataHora(LocalDateTime.now());
 
         MovimentacaoCaixa saved = movimentacaoCaixaRepository.save(movimentacao);
@@ -83,15 +83,16 @@ public class CaixaService {
 
     @Transactional
     public CaixaResponseDTO fecharCaixa(Long idCaixa, Double valorFinal) {
-        Caixa caixa = caixaRepository.findById(idCaixa)
+        // Fetch caixa with movimentacoes to calculate saldo (Requirement 6.5)
+        Caixa caixa = caixaRepository.findByIdWithMovimentacoes(idCaixa)
                 .orElseThrow(() -> new IllegalArgumentException("Caixa não encontrado"));
 
         if (caixa.getStatus() == StatusCaixa.FECHADO) {
             throw new IllegalStateException("Este caixa já está fechado!");
         }
 
-        // Calculate balance from movimentacoes
-        BigDecimal saldoCalculado = calcularSaldo(caixa);
+        // Calculate balance from movimentacoes: saldoFinal = saldoInicial + sum(ENTRADA) - sum(SAIDA)
+        Double saldoCalculado = calcularSaldo(caixa);
 
         caixa.setStatus(StatusCaixa.FECHADO);
         caixa.setDataFechamento(LocalDateTime.now());
@@ -100,20 +101,29 @@ public class CaixaService {
         return CaixaMapper.toDTO(caixaRepository.save(caixa));
     }
 
+    @Transactional(readOnly = true)
     public Optional<CaixaResponseDTO> buscarCaixaAberto() {
         return caixaRepository.findByStatus(StatusCaixa.ABERTO)
                 .map(CaixaMapper::toDTO);
     }
 
+    @Transactional(readOnly = true)
     public Optional<CaixaResponseDTO> buscarPorId(Long id) {
-        return caixaRepository.findById(id)
+        return caixaRepository.findByIdWithMovimentacoes(id)
                 .map(CaixaMapper::toDTO);
     }
 
+    @Transactional(readOnly = true)
     public List<CaixaResponseDTO> listarTodos() {
         return caixaRepository.findAll()
                 .stream()
-                .map(CaixaMapper::toDTO)
+                .map(caixa -> {
+                    // Force initialization of movimentacoes within transaction
+                    if (caixa.getMovimentacoes() != null) {
+                        caixa.getMovimentacoes().size();
+                    }
+                    return CaixaMapper.toDTO(caixa);
+                })
                 .toList();
     }
 
@@ -129,15 +139,15 @@ public class CaixaService {
         caixaRepository.delete(caixa);
     }
 
-    private BigDecimal calcularSaldo(Caixa caixa) {
-        BigDecimal saldo = caixa.getSaldoInicial();
+    private Double calcularSaldo(Caixa caixa) {
+        Double saldo = caixa.getSaldoInicial();
         
         if (caixa.getMovimentacoes() != null) {
             for (MovimentacaoCaixa mov : caixa.getMovimentacoes()) {
                 if (mov.getTipo() == TipoMovimentacao.ENTRADA) {
-                    saldo = saldo.add(mov.getValor());
+                    saldo += mov.getValor();
                 } else if (mov.getTipo() == TipoMovimentacao.SAIDA) {
-                    saldo = saldo.subtract(mov.getValor());
+                    saldo -= mov.getValor();
                 }
             }
         }

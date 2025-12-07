@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,10 +24,10 @@ public class Caixa {
     private LocalDateTime dataFechamento;
 
     @Column(name = "saldo_inicial", nullable = false)
-    private BigDecimal saldoInicial;
+    private Double saldoInicial;
 
     @Column(name = "saldo_final")
-    private BigDecimal saldoFinal;
+    private Double saldoFinal;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

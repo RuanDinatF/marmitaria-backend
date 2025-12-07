@@ -9,7 +9,8 @@ CREATE TABLE clientes (
     endereco VARCHAR(255),
     telefone VARCHAR(20),
     saldo DOUBLE,
-    limite_credito BOOLEAN
+    limite_credito BOOLEAN,
+    ativo BOOLEAN DEFAULT TRUE
 );
 
 -- Tabela tipo_produto
@@ -26,6 +27,7 @@ CREATE TABLE produto (
     quantidade_estoque DOUBLE,
     estoque_minimo DOUBLE,
     preco_venda DOUBLE,
+    ativo BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (id_tipo_produto) REFERENCES tipo_produto(id)
 );
 
@@ -43,8 +45,8 @@ CREATE TABLE caixa (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     data_abertura DATETIME NOT NULL,
     data_fechamento DATETIME,
-    saldo_inicial DECIMAL(38,2),
-    saldo_final DECIMAL(38,2),
+    saldo_inicial DOUBLE,
+    saldo_final DOUBLE,
     status VARCHAR(40)
 );
 
@@ -54,12 +56,13 @@ CREATE TABLE movimentacao_caixa
     caixa_id  BIGINT,
     tipo      VARCHAR(255),
     descricao VARCHAR(255),
-    valor     DECIMAL(38, 2),
+    valor     DOUBLE,
     data_hora DATETIME,
 
     CONSTRAINT fk_mov_caixa
         FOREIGN KEY (caixa_id)
             REFERENCES caixa (id)
+            ON DELETE CASCADE
 );
 
 -- Tabela venda
@@ -70,7 +73,7 @@ CREATE TABLE venda (
     desconto DOUBLE,
     valor_pago DOUBLE,
     data_venda DATE,
-    FOREIGN KEY (id_cliente) REFERENCES clientes(id)
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id) ON DELETE SET NULL
 );
 
 -- Tabela itens_venda
@@ -79,8 +82,8 @@ CREATE TABLE itens_venda (
     id_venda BIGINT NOT NULL,
     id_produto BIGINT NOT NULL,
     quantidade INT,
-    FOREIGN KEY (id_venda) REFERENCES venda(id),
-    FOREIGN KEY (id_produto) REFERENCES produto(id)
+    FOREIGN KEY (id_venda) REFERENCES venda(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_produto) REFERENCES produto(id) ON DELETE RESTRICT
 );
 
 -- Tabela unidade_medida

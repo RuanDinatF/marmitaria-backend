@@ -30,4 +30,7 @@ public class Produto {
     @Column(name = "preco_venda")
     private Double precoVenda;
 
+    @Column(name = "ativo")
+    private Boolean ativo = true;
+
 }

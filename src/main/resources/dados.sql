@@ -103,9 +103,20 @@ INSERT INTO tipos_imposto (tipo) VALUES
 -- ------------------------------
 INSERT INTO caixa (id, data_abertura, data_fechamento, saldo_inicial, saldo_final, status) VALUES
 (1, '2025-10-25 08:00:00', '2025-10-25 18:00:00', 500.00, 950.00, 'FECHADO'),
-(2, '2025-10-26 08:00:00', NULL, 600.00, NULL, 'FECHADO');
+(2, '2025-10-26 08:00:00', '2025-10-26 18:00:00', 600.00, 1050.00, 'FECHADO');
 
-
+-- ------------------------------
+-- MOVIMENTAÇÃO CAIXA
+-- ------------------------------
+INSERT INTO movimentacao_caixa (caixa_id, tipo, descricao, valor, data_hora) VALUES
+-- Movimentações do caixa 1
+(1, 'ENTRADA', 'Venda de marmitas', 300.00, '2025-10-25 12:30:00'),
+(1, 'ENTRADA', 'Venda de bebidas', 150.00, '2025-10-25 14:00:00'),
+(1, 'SAIDA', 'Compra de insumos', 50.00, '2025-10-25 16:00:00'),
+-- Movimentações do caixa 2
+(2, 'ENTRADA', 'Venda de marmitas', 400.00, '2025-10-26 11:00:00'),
+(2, 'ENTRADA', 'Venda de sobremesas', 100.00, '2025-10-26 15:00:00'),
+(2, 'SAIDA', 'Despesas operacionais', 50.00, '2025-10-26 17:00:00');
 
 -- ------------------------------
 -- MOVIMENTAÇÃO FINANCEIRA

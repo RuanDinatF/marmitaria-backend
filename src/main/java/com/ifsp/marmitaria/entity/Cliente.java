@@ -34,5 +34,8 @@ public class Cliente {
 	
 	@Column(name = "limite_credito")
 	private Boolean limiteCredito;
+	
+	@Column(name = "ativo")
+	private Boolean ativo = true;
     
 }

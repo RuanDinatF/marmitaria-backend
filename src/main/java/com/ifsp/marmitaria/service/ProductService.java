@@ -48,6 +48,7 @@ public class ProductService {
                     return new EntityNotFoundException("TipoProduto não encontrado com id: " + dto.getTipoProdutoId());
                 });
         produto.setTipoProduto(tipoProduto);
+        produto.setAtivo(true); // Garante que novos produtos são criados como ativos
 
         Produto produtoSalvo = produtoRepository.save(produto);
         logger.info("Produto criado com sucesso, id: {}", produtoSalvo.getId());
@@ -82,12 +83,9 @@ public class ProductService {
                     return new EntityNotFoundException("Produto não encontrado para exclusão com id: " + id);
                 });
 
-        try {
-            produtoRepository.delete(produtoExistente);
-            logger.info("Produto deletado com sucesso, id: {}", id);
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            logger.warn("Tentativa de deletar produto com referências em vendas, id: {}", id);
-            throw new IllegalStateException("Não é possível excluir este produto pois ele possui vendas registradas no sistema. Produtos com histórico de vendas não podem ser removidos para manter a integridade dos dados.");
-        }
+        // Soft delete: marca como inativo ao invés de deletar
+        produtoExistente.setAtivo(false);
+        produtoRepository.save(produtoExistente);
+        logger.info("Produto com id {} foi marcado como inativo (soft delete)", id);
     }
 }

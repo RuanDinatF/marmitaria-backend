@@ -1,6 +1,5 @@
 package com.ifsp.marmitaria.service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +120,7 @@ public class VendaService {
 		movimentacao.setCaixa(caixaAberto);
 		movimentacao.setTipo(TipoMovimentacao.ENTRADA);
 		movimentacao.setDescricao("Venda #" + vendaSalva.getId());
-		movimentacao.setValor(BigDecimal.valueOf(dto.getValorPago()));
+		movimentacao.setValor(dto.getValorPago());
 		movimentacao.setDataHora(LocalDateTime.now());
 		movimentacaoCaixaRepository.save(movimentacao);
 		logger.info("Movimentação de caixa criada para venda ID: {}. Valor: {}", vendaSalva.getId(), dto.getValorPago());
